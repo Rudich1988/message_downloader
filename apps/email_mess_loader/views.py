@@ -1,3 +1,15 @@
-from django.shortcuts import render
+import json
+from random import randint
+from time import sleep
 
-# Create your views here.
+from channels.generic.websocket import WebsocketConsumer
+
+
+class EmailConsumer(WebsocketConsumer):
+    def connect(self):
+        self.accept()
+
+        for i in range(1000):
+            self.send(json.dumps({'message': randint(1, 100)}))
+            sleep(1)
+

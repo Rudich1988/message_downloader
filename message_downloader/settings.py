@@ -41,8 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
+    'django_bootstrap5',
+    'channels',
 
+    'message_downloader',
     'apps.email_mess_loader.apps.EmailMessLoaderConfig',
 ]
 
@@ -75,6 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'message_downloader.wsgi.application'
+ASGI_APPLICATION = 'message_downloader.asgi.application'
 
 
 # Database

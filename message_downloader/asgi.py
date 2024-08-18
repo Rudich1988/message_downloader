@@ -14,7 +14,7 @@ from channels.routing import ProtocolTypeRouter
 from channels.auth import AuthMiddlewareStack
 from channels.routing import URLRouter
 
-from apps.email_mess_loader.routing import ws_urlpatterns
+from apps.mail_messages.routing import ws_urlpatterns
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'message_downloader.settings')
 

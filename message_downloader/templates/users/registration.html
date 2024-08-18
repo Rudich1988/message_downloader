@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container wrapper flex-grow-1">
+  <h1 class="my-4">
+    Регистрация
+  </h1>
+  <form action="{% url 'users:create_user' %}" method="post" class="form">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <input class="btn btn-primary" type="submit" value="Зарегистрировать">
+  </form>
+</div>
+{% endblock %}

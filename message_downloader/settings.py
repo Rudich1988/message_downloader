@@ -47,8 +47,12 @@ INSTALLED_APPS = [
     'channels',
 
     'message_downloader',
-    'apps.email_mess_loader.apps.EmailMessLoaderConfig',
+    'apps.users.apps.UsersConfig',
+    'apps.mail_messages.apps.MailMessagesConfig',
+    'apps.accounts.apps.AccountsConfig',
 ]
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

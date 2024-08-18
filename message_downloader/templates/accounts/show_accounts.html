@@ -21,7 +21,7 @@
       <tr>
         <td>{{ account.id }}</td>
         <td>{{ account.email }}</td>
-        <td><a href="">просмотр сообщений</a></td>
+        <td><a href="{% url 'mail_messages:save_messages' account.id %}">просмотр сообщений</a></td>
         <td>
             <a href="">изменить</a>
         </td>

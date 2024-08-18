@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bootstrap5',
     'channels',
+    'channels_redis',
 
     'message_downloader',
     'apps.users.apps.UsersConfig',
@@ -82,8 +83,18 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'message_downloader.wsgi.application'
 ASGI_APPLICATION = 'message_downloader.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database

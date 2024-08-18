@@ -2,6 +2,7 @@ from django.views.generic.edit import CreateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
+from django.views.generic import TemplateView
 
 from apps.accounts.models import UserEmailAccount
 from apps.accounts.forms import AccountCreateForm
@@ -26,5 +27,15 @@ class AccountsShowView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['accounts'] = UserEmailAccount.objects.all()
+        return context
+
+
+class AccountDetailView(TemplateView):
+    template_name = 'messages/show_messages.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['account'] = 'imap.' + UserEmailAccount.objects.get(id=kwargs.get('pk')).email.split('@')[1]
+        context['r'] = self.request.pk
         return context
 

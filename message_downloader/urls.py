@@ -10,4 +10,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('apps.users.urls', namespace='users')),
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
+    path('mail_messages/', include('apps.mail_messages.urls', namespace='mail_messages'))
 ]

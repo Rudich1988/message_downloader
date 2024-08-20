@@ -353,17 +353,6 @@ files = [
 ]
 
 [[package]]
-name = "imaplib2"
-version = "3.6"
-description = "A threaded Python IMAP4 client."
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "imaplib2-3.6-py3-none-any.whl", hash = "sha256:8d51b9bf6b7be99ea3caf4503bb15c7299f626b8d2bb6139e6055cf2613aac6a"},
-    {file = "imaplib2-3.6.tar.gz", hash = "sha256:96cb485b31868a242cb98d5c5dc67b39b22a6359f30316de536060488e581e5b"},
-]
-
-[[package]]
 name = "incremental"
 version = "24.7.2"
 description = "A small library that versions your Python projects."
@@ -805,4 +794,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "7251fba7b78eebdf0c79b5d2d762b0a800504ded3aeb10d8cea31d5cedc2ec18"
+content-hash = "dbbcfda459ecd105b003af28890fa227a920c3bab2d17617c24cdf36518b7e2f"

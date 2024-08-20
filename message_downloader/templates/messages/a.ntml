@@ -6,10 +6,7 @@
   <h1 class="my-4">
     Мои Сообщения
   </h1>
-  <div id="progress-bar-container" style="margin-bottom: 20px;">
-    <div id="progress-bar" style="width: 0%; background: green; height: 20px;"></div>
-    <div id="progress-text" style="margin-top: 5px; font-weight: bold;"></div>
-  </div>
+  <div id="progress-bar" style="width: 100%; background: green; height: 20px;"></div>
   <ul id="message-list"></ul>
   <table class="table table-striped">
     <thead>
@@ -42,7 +39,6 @@
 <script>
     const emailAccountId = "{{ email_account_id }}";
     let socket = new WebSocket(`ws://localhost:8000/ws/email_messages/${emailAccountId}/`);
-
     socket.onmessage = function(e) {
         let data = JSON.parse(e.data);
         if (data.type === 'new_message') {
@@ -60,14 +56,10 @@
         } else if (data.type === 'progress_update') {
             let progress = data.progress;
             document.querySelector('#progress-bar').style.width = `${progress}%`;
-            document.querySelector('#progress-text').textContent = `${progress}`;
         }
     };
-
     socket.onclose = function(e) {
         console.error('Socket закрыт неожиданно');
     };
 </script>
-
 {% endblock %}
-

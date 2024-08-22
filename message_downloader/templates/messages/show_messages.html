@@ -38,7 +38,6 @@
     </tbody>
   </table>
 </div>
-
 <script>
     const emailAccountId = "{{ email_account_id }}";
     let socket = new WebSocket(`ws://localhost:8000/ws/email_messages/${emailAccountId}/`);
@@ -63,7 +62,6 @@
             document.querySelector('#progress-text').textContent = `${progress}`;
         }
     };
-
     socket.onclose = function(e) {
         console.error('Socket закрыт неожиданно');
     };

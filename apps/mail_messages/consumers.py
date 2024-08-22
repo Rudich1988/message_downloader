@@ -1,13 +1,12 @@
 import json
 import imaplib
-from time import sleep
 import email
 from email.header import decode_header
 from email.utils import parsedate_to_datetime as parse_datetime
-
+from asgiref.sync import sync_to_async
 import asyncio
+
 from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import async_to_sync, sync_to_async
 
 from .models import EmailMessage
 from apps.accounts.models import UserEmailAccount
@@ -23,7 +22,8 @@ class EmailFetcher:
         self.mail = None
 
     async def load_account(self):
-        self.user_account = await sync_to_async(UserEmailAccount.objects.get)(id=self.user_account_id)
+        self.user_account = await (sync_to_async(UserEmailAccount.objects.get)
+                                   (id=self.user_account_id))
         self.email = self.user_account.email
         self.password = self.user_account.password
         self.imap_server = 'imap.' + self.email.split('@')[1]
@@ -37,15 +37,13 @@ class EmailFetcher:
             self.mail.logout()
             self.mail = None
 
-    async def fetch_messages(self):
+    async def fetch_messages(self, flag):
         await self.load_account()
         await sync_to_async(self.connect)()
-        #messages = await sync_to_async(self._fetch)('ALL')#(flag='RECENT')
-        messages = await sync_to_async(EmailMessageConsumer()._fetch)(flag='ALL', fetcher=self, mail=self.mail)#(flag='RECENT')
+        messages = await sync_to_async(self._fetch)(flag=flag)
         await sync_to_async(self.disconnect)()
         return messages
 
-    '''
     def _fetch(self, flag):
         self.mail.select("inbox")
         status, messages = self.mail.search(None, flag)
@@ -61,7 +59,6 @@ class EmailFetcher:
             data = self.create_data_message(msg)
             result.append(data)
         return result
-    '''
 
     def create_data_message(self, msg):
         if 'Subject' in msg:
@@ -109,7 +106,6 @@ class EmailFetcher:
         return message_data
 
 
-
 class EmailMessageConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.email_account_id = self.scope['url_route']['kwargs']['email_account_id']
@@ -128,11 +124,17 @@ class EmailMessageConsumer(AsyncWebsocketConsumer):
         )
 
     async def fetch_and_send_new_messages(self):
-        account = await sync_to_async(UserEmailAccount.objects.get)(id=self.email_account_id)
+        account = await (sync_to_async(UserEmailAccount.objects.get)
+                         (id=self.email_account_id))
         fetcher = EmailFetcher(account.id)
-        new_messages = await fetcher.fetch_messages()
+        has_messages = await sync_to_async(EmailMessage.objects.filter
+                                           (account=account).exists)()
+        flag = 'RECENT' if has_messages else 'ALL'
+        new_messages = await fetcher.fetch_messages(flag=flag)
+        regress = len(new_messages)
         progress = 0
         for message_data in new_messages:
+            regress -= 1
             progress += 1
             new_message = await sync_to_async(EmailMessage.objects.create)(
                 account=account,
@@ -152,7 +154,7 @@ class EmailMessageConsumer(AsyncWebsocketConsumer):
                         'body': new_message.body,
                         'received_date': new_message.received_date.isoformat(),
                         'sent_date': new_message.sent_date.isoformat(),
-                        'progress': progress,
+                        'regress': regress,
                     }
                 }
             )
@@ -160,7 +162,7 @@ class EmailMessageConsumer(AsyncWebsocketConsumer):
                 'type': 'progress_update',
                 'progress': progress,
             }))
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
 
     async def send_message(self, event):
         message = event['message']
@@ -168,27 +170,10 @@ class EmailMessageConsumer(AsyncWebsocketConsumer):
             'type': 'new_message',
             'message': message
         }))
-        progress = message.get('progress', 0)
-        if progress > 0:
+        regress = message.get('regress', 0)
+        if regress >= 0:
             await self.send(text_data=json.dumps({
                 'type': 'progress_update',
-                'progress': progress
+                'progress': regress
             }))
-            await asyncio.sleep(1)
-        await asyncio.sleep(1)
-
-    def _fetch(self, mail, flag, fetcher):
-        mail.select("inbox")
-        status, messages = mail.search(None, flag)
-        if status != "OK":
-            return []
-        messages = messages[0].split()
-        result = []
-        for msg_num in messages:
-            status, msg_data = mail.fetch(msg_num, "(RFC822)")
-            if status != "OK":
-                continue
-            msg = email.message_from_bytes(msg_data[0][1])
-            data = fetcher.create_data_message(msg)
-            result.append(data)
-        return result
+        await asyncio.sleep(0.5)

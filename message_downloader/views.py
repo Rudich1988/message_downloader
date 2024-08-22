@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
-from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import authenticate, login, logout
 
@@ -10,11 +9,6 @@ from apps.users.forms import UserLoginForm
 
 class IndexView(TemplateView):
     template_name = 'index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['text'] = 'Hello, World!'
-        return context
 
 
 class UserLoginView(LoginView):
@@ -34,12 +28,10 @@ class UserLoginView(LoginView):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, 'Вы залогинены')
                 return redirect('index')
         return render(request, self.template_name, context={'form': form})
 
 
 def logoutview(request):
     logout(request)
-    messages.info(request, 'Вы разлогинены')
     return redirect('index')

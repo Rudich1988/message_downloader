@@ -21,12 +21,12 @@
       <tr>
         <td>{{ account.id }}</td>
         <td>{{ account.email }}</td>
-        <td><a href="{% url 'mail_messages:save_messages' account.id %}">просмотр сообщений</a></td>
+        <td><a href="{% url 'mail_messages:show_email_messages' account.id %}">просмотр сообщений</a></td>
         <td>
-            <a href="">изменить</a>
+            <a href="{% url 'accounts:update_account' account.id %}">изменить</a>
         </td>
         <td>
-          <a href="">удалить</a>
+          <a href="{% url 'accounts:delete_account' account.id %}">удалить</a>
         </td>
       </tr>
       {% endfor %}

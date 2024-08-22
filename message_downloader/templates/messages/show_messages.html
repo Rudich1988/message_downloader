@@ -24,12 +24,20 @@
     <tbody id="message-table-body">
       {% for message in messages %}
       <tr>
-        <td>{{ message.id }}</td>
+        <td><a href="{% url 'mail_messages:message_detail' message.id %}">{{ message.id }}</a></td>
         <td>{{ message.title }}</td>
         <td>{{ message.received_date }}</td>
         <td>{{ message.body|slice:":40" }}</td>
         {% if message.attachments %}
-          <td>{{ message.attachments }}</td>
+        <td>
+          <ul>
+            {% for attachment in message.attachments.all %}
+              <li>
+                  <a href="{{ attachment.file.url }}">{{ attachment.filename }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </td>
         {% else %}
           <td></td>
         {% endif %}
@@ -66,6 +74,4 @@
         console.error('Socket закрыт неожиданно');
     };
 </script>
-
 {% endblock %}
-

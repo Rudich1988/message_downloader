@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container wrapper flex-grow-1">
+  <h1 class="my-4">
+    Просмотр сообщения
+  </h1>
+  <div class="card">
+    <div class="card-header bg-secondary text-white">
+      <h2>{{ message.title }}</h2>
+    </div>
+    <div class="card-body bg-light">
+      <p>{{ message.body }}</p>
+      <hr>
+      <div class="container">
+        <div class="row p-1">
+          <div class="col">Автор</div>
+          <div class="col">{{ message.owner.get_full_name }}</div>
+        </div>
+        <div class="row p-1">
+          <div class="col">Дата получения</div>
+          <div class="col">{{ message.received_date }}</div>
+        </div>
+        {% if message.attachments %}
+          <div class="row p-1">
+          <div class="col">Файлы</div>
+          <div class="col">{{ message.attachments }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

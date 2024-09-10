@@ -19,7 +19,7 @@ poetry shell
 export {veriable}={veriable_value}
 ```
 
-- Для запуска запуска проекта используйте команду:
+- Для запуска проекта используйте команду:
 ```python
 make dev
 ```
